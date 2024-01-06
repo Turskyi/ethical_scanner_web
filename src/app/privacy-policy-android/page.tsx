@@ -8,7 +8,7 @@ const PrivacyPolicyAndroid = () => {
   return (
     <main
       className="flex min-h-screen flex-col items-center justify-between p-24"
-      style={{ background: "linear-gradient(to bottom, #000C40, #F0F2F0)" }}
+      style={{ background: "linear-gradient(to bottom, #000C40, #ACB6E5)" }}
     >
       <div className="mb-8 flex flex-col items-center justify-center">
         <h1 className="mb-4 max-w-2xl text-4xl font-bold text-white">
