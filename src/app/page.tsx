@@ -8,11 +8,32 @@ export default function Home() {
       style={{ background: "linear-gradient(to bottom, #000C40, #F0F2F0)" }}
     >
       <div className="mb-8 flex flex-col items-center justify-center">
-        <h1 className="mb-4 text-4xl font-bold text-white">Ethical Scanner</h1>
+        <h1 className="mb-4 text-5xl font-bold text-white">Ethical Scanner</h1>
+        <h2 className="mb-4 text-3xl text-white">
+          Empowering Consumers to Make Ethical Choices
+        </h2>
         <br />
-        <p className="gradient-text text-2xl text-gray-200">
+        <br />
+        <p className="gradient-text text-3xl text-gray-200">
           Scan products to learn about their ethical information.
         </p>
+        <p className="gradient-text text-2xl text-white">
+          Know your products better to make ethical choices!
+        </p>
+        <br />
+        <br />
+        <div style={{ maxWidth: "600px" }}>
+          <p className="text-xl text-white">
+            Ethical Scanner is a product ethics tool for Android platform. By
+            using this tool, we hope you can better understand the ethical
+            implications of your purchases.
+          </p>
+        </div>
+        <br />
+        <ul className="list-inside list-disc text-white">
+          <li>Scan barcodes to get ethical information about products</li>
+          <li>Make informed decisions about your purchases</li>
+        </ul>
       </div>
 
       <Link
