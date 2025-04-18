@@ -118,7 +118,7 @@ export default function Home() {
       </div>
       <footer className="mt-8 text-center text-white">
         <div className="mb-8 flex flex-col items-center space-y-4">
-          <div className="flex items-center space-x-6">
+          <div className="flex items-center space-x-4">
             <a
               href="https://play.google.com/store/apps/details?id=com.turskyi.ethical_scanner&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1"
               target="_blank"
@@ -138,6 +138,15 @@ export default function Home() {
                 style={{ backgroundColor: "#000C40" }}
               >
                 Support
+              </button>
+            </Link>
+
+            <Link href="/privacy">
+              <button
+                className="rounded px-4 py-2 text-white transition hover:bg-[#1a2c44]"
+                style={{ backgroundColor: "#000C40" }}
+              >
+                Privacy
               </button>
             </Link>
           </div>
