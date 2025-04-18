@@ -35,7 +35,6 @@ export default function Home() {
           <li>Make informed decisions about your purchases</li>
         </ul>
       </div>
-
       <Link
         href="https://play.google.com/store/apps/details?id=com.turskyi.ethical_scanner"
         passHref
@@ -48,20 +47,12 @@ export default function Home() {
           className="rounded-full bg-white object-cover shadow-md"
         />
       </Link>
-      <div className="mb-8 flex space-x-4">
-        <div
-          style={{
-            position: "fixed",
-            bottom: 0,
-            left: "50%",
-            transform: "translateX(-50%)",
-            paddingBottom: "90px",
-          }}
-        >
+      <div className="mb-8 flex flex-col items-center space-y-4">
+        <div className="flex items-center space-x-6">
           <a
             href="https://play.google.com/store/apps/details?id=com.turskyi.ethical_scanner&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1"
             target="_blank"
-            style={{ alignSelf: "center" }}
+            rel="noopener noreferrer"
           >
             <Image
               src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png"
@@ -70,6 +61,15 @@ export default function Home() {
               height={58}
             />
           </a>
+
+          <Link href="/support">
+            <button
+              className="rounded px-4 py-2 text-white transition hover:bg-[#1a2c44]"
+              style={{ backgroundColor: "#000C40" }}
+            >
+              Support
+            </button>
+          </Link>
         </div>
       </div>
     </main>
