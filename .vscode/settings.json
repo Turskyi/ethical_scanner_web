@@ -1,11 +1,28 @@
 {
-    "spellright.language": [
-        "en"
-    ],
-    "spellright.documentTypes": [
-        "markdown",
-        "latex",
-        "plaintext",
-        "typescriptreact"
-    ]
+  "editor.formatOnSave": true,
+  "prettier.singleQuote": true,
+  "editor.wordWrap": "wordWrapColumn",
+  "editor.wordWrapColumn": 80,
+  "prettier.printWidth": 80,
+  "editor.rulers": [80],
+  "prettier.trailingComma": "all",
+  "spellright.language": ["en"],
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "spellright.documentTypes": [
+    "markdown",
+    "latex",
+    "plaintext",
+    "jsonc",
+    "typescriptreact",
+    "json",
+    "Log",
+    "javascript"
+  ],
+  "spellright.parserByClass": {
+    "Log": {
+      "parser": "code"
+    }
+  }
 }

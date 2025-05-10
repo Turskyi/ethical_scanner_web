@@ -1,16 +1,17 @@
-import Image from "next/image";
-import Link from "next/link";
-import screenshot1 from "../../screenshots/screen1.jpeg";
-import screenshot2 from "../../screenshots/screen2.jpeg";
-import screenshot3 from "../../screenshots/screen3.jpeg";
-import screenshot4 from "../../screenshots/screen4.jpeg";
-import screenshot5 from "../../screenshots/screen5.jpeg";
+import Image from 'next/image';
+import Link from 'next/link';
+import screenshot1 from '../../screenshots/screen1.jpeg';
+import screenshot2 from '../../screenshots/screen2.jpeg';
+import screenshot3 from '../../screenshots/screen3.jpeg';
+import screenshot4 from '../../screenshots/screen4.jpeg';
+import screenshot5 from '../../screenshots/screen5.jpeg';
+import { GOOGLE_PLAY, APP_NAME, APP_STORE } from '../../constants';
 
 export default function Home() {
   return (
     <main
       className="flex min-h-screen flex-col items-center justify-between py-12 md:px-12 lg:px-24"
-      style={{ background: "linear-gradient(to bottom, #000C40, #F0F2F0)" }}
+      style={{ background: 'linear-gradient(to bottom, #000C40, #F0F2F0)' }}
     >
       <div className="mb-8 flex flex-col items-center justify-center">
         <h1 className="mb-4 text-5xl font-bold text-white">Ethical Scanner</h1>
@@ -27,21 +28,18 @@ export default function Home() {
         </p>
         <br />
         <br />
-        <div style={{ maxWidth: "600px" }}>
+        <div style={{ maxWidth: '600px' }}>
           <p className="px-4 text-xl text-white">
-            Ethical Scanner is a mobile app that helps you explore the ethical
+            {APP_NAME} is a mobile app that helps you explore the ethical
             background of everyday products. Use it to better understand the
             impact of your purchases.
           </p>
         </div>
       </div>
-      <Link
-        href="https://play.google.com/store/apps/details?id=com.turskyi.ethical_scanner"
-        passHref
-      >
+      <Link href={`${GOOGLE_PLAY}`} passHref>
         <Image
           src="/logo.png"
-          alt="Ethical Scanner Logo"
+          alt={`${APP_NAME} Logo`}
           width={96}
           height={96}
           className="rounded-full bg-white object-cover shadow-md"
@@ -120,7 +118,7 @@ export default function Home() {
         <div className="mb-8 flex flex-col items-center space-y-4">
           <div className="flex items-center space-x-4">
             <a
-              href="https://play.google.com/store/apps/details?id=com.turskyi.ethical_scanner&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1"
+              href={`${GOOGLE_PLAY}`}
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -131,11 +129,23 @@ export default function Home() {
                 height={58}
               />
             </a>
+            <a
+            href={`${APP_STORE}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            >
+              <Image
+                src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg"
+                alt="Download on the App Store"
+                width={128}
+                height={44}
+              />
+            </a>
 
             <Link href="/support">
               <button
                 className="rounded px-4 py-2 text-white transition hover:bg-[#1a2c44]"
-                style={{ backgroundColor: "#000C40" }}
+                style={{ backgroundColor: '#000C40' }}
               >
                 Support
               </button>
@@ -144,7 +154,7 @@ export default function Home() {
             <Link href="/privacy">
               <button
                 className="rounded px-4 py-2 text-white transition hover:bg-[#1a2c44]"
-                style={{ backgroundColor: "#000C40" }}
+                style={{ backgroundColor: '#000C40' }}
               >
                 Privacy
               </button>
@@ -152,8 +162,8 @@ export default function Home() {
           </div>
         </div>
         <p className="text-sm text-gray-400">
-          Ethical Scanner is developed by a passionate team dedicated to
-          promoting ethical consumerism.
+          {APP_NAME} is developed by a passionate team dedicated to promoting
+          ethical consumerism.
         </p>
       </footer>
     </main>
