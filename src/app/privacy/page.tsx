@@ -1,17 +1,17 @@
-import { Metadata } from "next";
-import Link from "next/link";
-import Image from "next/image";
-import logo from "../../../public/logo.png";
+import { Metadata } from 'next';
+import Link from 'next/link';
+import Image from 'next/image';
+import logo from '../../../public/logo.png';
 
 export const metadata: Metadata = {
-  title: "Ethical Scanner - Privacy Policy",
+  title: 'Ethical Scanner - Privacy Policy',
 };
 
 const PrivacyPolicy = () => {
   return (
     <main
       className="flex min-h-screen flex-col items-center px-4 pt-4 sm:pt-8"
-      style={{ background: "linear-gradient(to bottom, #000C40, #ACB6E5)" }}
+      style={{ background: 'linear-gradient(to bottom, #000C40, #ACB6E5)' }}
     >
       <div className="flex w-full justify-start px-1 sm:absolute sm:left-4 sm:top-4 sm:px-8">
         <Link href="/">
@@ -38,7 +38,8 @@ const PrivacyPolicy = () => {
       <div className="max-w-3xl text-white">
         <p>
           This Privacy Policy explains how we collect, use, disclose, and
-          safeguard your information when you use our mobile application.
+          safeguard your information when you use our application, whether on
+          mobile, web, or desktop platforms.
         </p>
 
         <h2 className="mt-4 text-2xl font-semibold">Information We Collect</h2>
@@ -85,8 +86,10 @@ const PrivacyPolicy = () => {
         <p>
           If you have any questions, comments, or concerns about our Privacy
           Policy or our data practices, please contact us at&#160;
-          <a href="mailto:dmytro@turskyi.com">dmytro@turskyi.com</a>. We will
-          respond to your inquiry as soon as possible.
+          <a href="mailto:support@ethical-scanner.com">
+            support@ethical-scanner.com
+          </a>
+          . We will respond to your inquiry as soon as possible.
         </p>
       </div>
     </main>
