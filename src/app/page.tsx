@@ -41,7 +41,7 @@ export default function Home() {
           </p>
         </div>
       </div>
-      <Link href={`${FLUTTER_WEB_URL}`} passHref>
+      <Link href="/web-app">
         <Image
           src="/logo.png"
           alt={`${APP_NAME} Logo`}
@@ -116,7 +116,7 @@ export default function Home() {
           Download Ethical Scanner
         </h2>
         <p className=" text-gray-800">
-          Available now for Android. Coming soon to the App Store!
+          Available now for Android and App Store!
         </p>
       </div>
       <footer className="mt-8 text-center text-white">
