@@ -5,7 +5,12 @@ import screenshot2 from '../../screenshots/screen2.jpeg';
 import screenshot3 from '../../screenshots/screen3.jpeg';
 import screenshot4 from '../../screenshots/screen4.jpeg';
 import screenshot5 from '../../screenshots/screen5.jpeg';
-import { GOOGLE_PLAY, APP_NAME, APP_STORE } from '../../constants';
+import {
+  GOOGLE_PLAY,
+  APP_NAME,
+  APP_STORE,
+  FLUTTER_WEB_URL,
+} from '../../constants';
 
 export default function Home() {
   return (
@@ -36,7 +41,7 @@ export default function Home() {
           </p>
         </div>
       </div>
-      <Link href={`${GOOGLE_PLAY}`} passHref>
+      <Link href={`${FLUTTER_WEB_URL}`} passHref>
         <Image
           src="/logo.png"
           alt={`${APP_NAME} Logo`}
@@ -129,11 +134,7 @@ export default function Home() {
                 height={58}
               />
             </a>
-            <a
-            href={`${APP_STORE}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            >
+            <a href={`${APP_STORE}`} target="_blank" rel="noopener noreferrer">
               <Image
                 src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg"
                 alt="Download on the App Store"
