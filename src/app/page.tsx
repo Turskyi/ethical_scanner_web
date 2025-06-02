@@ -41,7 +41,7 @@ export default function Home() {
           </p>
         </div>
       </div>
-      <Link href="/web-app">
+      <Link href="/scan">
         <Image
           src="/logo.png"
           alt={`${APP_NAME} Logo`}
