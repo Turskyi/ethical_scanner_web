@@ -116,7 +116,7 @@ export default function Home() {
           Download Ethical Scanner
         </h2>
         <p className=" text-gray-800">
-          Available now for Android and App Store!
+          Available now on Google Play and the App Store!
         </p>
       </div>
       <footer className="mt-8 text-center text-white">
