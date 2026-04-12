@@ -103,3 +103,60 @@ for web pages) and check product information directly from your browser.
 This project's development is managed using GitHub Projects. You can view our
 current tasks, progress, and roadmap here:
 [Ethical Scanner - Project Roadmap](https://github.com/users/Turskyi/projects/10)
+
+## Data Sync Script: `sync_yale_companies.py`
+
+This project includes a Python script to synchronize the local company dataset with the latest Yale SOM Russia business retreat list.
+
+### Location
+
+- Script: `scripts/sync_yale_companies.py`
+- Default dataset: `src/app/api/russia-sponsors-response.json`
+
+### Requirements
+
+- Python 3.7+
+- No external dependencies (uses only the Python standard library)
+
+### Usage
+
+Run the script from the project root directory:
+
+```bash
+python3 scripts/sync_yale_companies.py
+```
+
+By default, this will:
+- Download the latest company list from Yale SOM
+- Update the local JSON dataset in place (`src/app/api/russia-sponsors-response.json`)
+- Print a summary of changes to the console
+
+#### Options
+
+- `--input <path>`: Path to the input dataset JSON file (default: `src/app/api/russia-sponsors-response.json`)
+- `--output <path>`: Path to write the updated dataset (default: overwrite input)
+- `--source-url <url>`: Custom Yale SOM source URL
+- `--summary-json <path>`: Write a machine-readable summary JSON report
+- `--indent <n>`: Indentation for output JSON (default: 2)
+- `--dry-run`: Do not write any files, just print the summary
+
+#### Example: Dry Run
+
+```bash
+python3 scripts/sync_yale_companies.py --dry-run
+```
+
+#### Example: Custom Output and Summary
+
+```bash
+python3 scripts/sync_yale_companies.py --output updated.json --summary-json summary.json
+```
+
+### What It Does
+
+- Matches companies by name (with normalization and alias handling)
+- Updates status, action, and country fields for matched companies
+- Adds new companies (except those with status "Withdrawal" or "Suspension")
+- Optionally writes a summary report
+
+See the script source for full details and advanced matching logic.
