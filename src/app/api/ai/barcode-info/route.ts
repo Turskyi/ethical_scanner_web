@@ -17,6 +17,7 @@ const BARCODE_INFO_PROMPT =
   'not necessarily where the product was manufactured. Do not claim a ' +
   'product origin without reliable evidence. Be concise and state when the ' +
   'identifier alone is insufficient.';
+const GEMINI_MODEL = 'gemini-3.5-flash-lite';
 
 const PROVIDERS = [
   {
@@ -96,7 +97,7 @@ async function requestChatCompletion(
 
 async function requestGemini(barcode: string, apiKey: string): Promise<string> {
   const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key=${encodeURIComponent(apiKey)}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${encodeURIComponent(apiKey)}`,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -188,7 +189,10 @@ export async function POST(request: Request) {
     if (apiKey) {
       try {
         const info = await requestChatCompletion(provider, barcode, apiKey);
-        return jsonResponse({ info, provider: provider.name }, 200);
+        return jsonResponse(
+          { info, provider: provider.name, model: provider.model },
+          200,
+        );
       } catch (error) {
         console.warn(`${provider.name} barcode lookup failed:`, error);
       }
@@ -199,7 +203,7 @@ export async function POST(request: Request) {
   if (geminiApiKey) {
     try {
       const info = await requestGemini(barcode, geminiApiKey);
-      return jsonResponse({ info, provider: 'Gemini' }, 200);
+      return jsonResponse({ info, provider: 'Gemini', model: GEMINI_MODEL }, 200);
     } catch (error) {
       console.warn('Gemini barcode lookup failed:', error);
     }
