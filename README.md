@@ -106,7 +106,8 @@ current tasks, progress, and roadmap here:
 
 ## Data Sync Script: `sync_yale_companies.py`
 
-This project includes a Python script to synchronize the local company dataset with the latest Yale SOM Russia business retreat list.
+This project includes a Python script to synchronize the local company dataset
+with the latest Yale SOM Russia business retreat list.
 
 ### Location
 
@@ -127,14 +128,18 @@ python3 scripts/sync_yale_companies.py
 ```
 
 By default, this will:
+
 - Download the latest company list from Yale SOM
-- Update the local JSON dataset in place (`src/app/api/russia-sponsors-response.json`)
+- Update the local JSON dataset in place (
+  `src/app/api/russia-sponsors-response.json`)
 - Print a summary of changes to the console
 
 #### Options
 
-- `--input <path>`: Path to the input dataset JSON file (default: `src/app/api/russia-sponsors-response.json`)
-- `--output <path>`: Path to write the updated dataset (default: overwrite input)
+- `--input <path>`: Path to the input dataset JSON file (default:
+  `src/app/api/russia-sponsors-response.json`)
+- `--output <path>`: Path to write the updated dataset (default: overwrite
+  input)
 - `--source-url <url>`: Custom Yale SOM source URL
 - `--summary-json <path>`: Write a machine-readable summary JSON report
 - `--indent <n>`: Indentation for output JSON (default: 2)
