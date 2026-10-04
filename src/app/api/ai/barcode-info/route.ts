@@ -10,14 +10,14 @@ const CORS_HEADERS = {
 };
 
 const BARCODE_INFO_PROMPT =
-  'You analyze product identifiers. Explain what can and cannot be inferred ' +
-  'from the provided barcode or product identifier, especially GS1 prefix ' +
-  'country assignment and common identifier formats. Clarify that a GS1 ' +
-  'prefix identifies the GS1 member organization that allocated the number, ' +
-  'not necessarily where the product was manufactured. Do not claim a ' +
-  'product origin without reliable evidence. Be concise and state when the ' +
-  'identifier alone is insufficient.';
+  'You analyze product identifiers. In no more than three short sentences, ' +
+  'explain what can and cannot be inferred from the provided barcode. Clarify ' +
+  'that a GS1 prefix identifies the allocating GS1 organization, not where ' +
+  'the product was manufactured. Do not claim an origin without reliable ' +
+  'evidence. State when the identifier is insufficient. End with a complete ' +
+  'sentence and do not ask a follow-up question.';
 const GEMINI_MODEL = 'gemini-3.5-flash-lite';
+const MAX_OUTPUT_TOKENS = 400;
 
 const PROVIDERS = [
   {
@@ -52,6 +52,10 @@ function extractChatCompletionText(value: unknown): string | null {
     return null;
   }
 
+  if (firstChoice.finish_reason === 'length') {
+    throw new Error('Provider response reached its output token limit');
+  }
+
   const content = firstChoice.message.content;
   if (typeof content === 'string' && content.trim().length > 0) {
     return content.trim();
@@ -74,7 +78,7 @@ async function requestChatCompletion(
     body: JSON.stringify({
       model: provider.model,
       temperature: 0.2,
-      max_tokens: 250,
+      max_tokens: MAX_OUTPUT_TOKENS,
       messages: [
         { role: 'system', content: BARCODE_INFO_PROMPT },
         { role: 'user', content: `Analyze this identifier: ${barcode}` },
@@ -111,7 +115,10 @@ async function requestGemini(barcode: string, apiKey: string): Promise<string> {
             parts: [{ text: `Analyze this identifier: ${barcode}` }],
           },
         ],
-        generationConfig: { temperature: 0.2, maxOutputTokens: 250 },
+        generationConfig: {
+          temperature: 0.2,
+          maxOutputTokens: MAX_OUTPUT_TOKENS,
+        },
       }),
       signal: AbortSignal.timeout(10_000),
     },
@@ -133,6 +140,10 @@ async function requestGemini(barcode: string, apiKey: string): Promise<string> {
     !Array.isArray(candidate.content.parts)
   ) {
     throw new Error('Provider returned an invalid response');
+  }
+
+  if (candidate.finishReason === 'MAX_TOKENS') {
+    throw new Error('Provider response reached its output token limit');
   }
 
   const info = candidate.content.parts
