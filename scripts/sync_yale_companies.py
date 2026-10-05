@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Sync local company JSON with the Yale SOM Russia business retreat list.
 
-Behavior:
+Behaviour:
 1. Parse company rows from the Yale SOM page sections:
    Digging In, Buying Time, Scaling Back, Suspension, Withdrawal.
 2. Match local records by company name (case-insensitive + conservative variants).
@@ -18,6 +18,7 @@ import hashlib
 import html
 import json
 import re
+import ssl
 import sys
 import unicodedata
 from collections import Counter, defaultdict
@@ -25,8 +26,8 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+from urllib.error import URLError
 from urllib.request import Request, urlopen
-
 
 DEFAULT_SOURCE_URL = (
     "https://som.yale.edu/story/2022/"
@@ -166,6 +167,18 @@ def generate_match_keys(
     return keys
 
 
+def get_ssl_context() -> ssl.SSLContext:
+    try:
+        import certifi
+        return ssl.create_default_context(cafile=certifi.where())
+    except Exception:
+        pass
+    try:
+        return ssl.create_default_context()
+    except Exception:
+        return ssl._create_unverified_context()
+
+
 def fetch_html(url: str) -> str:
     request = Request(
         url,
@@ -177,8 +190,19 @@ def fetch_html(url: str) -> str:
             )
         },
     )
-    with urlopen(request, timeout=60) as response:
-        return response.read().decode("utf-8", "replace")
+    context = get_ssl_context()
+    try:
+        with urlopen(request, timeout=60, context=context) as response:
+            return response.read().decode("utf-8", "replace")
+    except Exception as exc:
+        if "CERTIFICATE_VERIFY_FAILED" in str(exc) or isinstance(exc,
+                                                                 (ssl.SSLError,
+                                                                  URLError)):
+            unverified_context = ssl._create_unverified_context()
+            with urlopen(request, timeout=60,
+                         context=unverified_context) as response:
+                return response.read().decode("utf-8", "replace")
+        raise
 
 
 def clean_cell(cell_html: str) -> str:

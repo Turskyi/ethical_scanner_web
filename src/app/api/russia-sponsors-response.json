@@ -5622,7 +5622,7 @@
     "createdTime": "2022-03-17T05:35:43.000Z",
     "fields": {
       "Name": "Cloudflare",
-      "Action": "Continue sales & services in Russia",
+      "Action": "suspend all business in Russia",
       "Logo": [
         {
           "id": "atteErYygnFgdiVLG",
@@ -5651,7 +5651,7 @@
           }
         }
       ],
-      "Status": "Digging In",
+      "Status": "Suspension",
       "Exception": "Online Security",
       "Country": "United States",
       "Website URL": "https://www.cloudflare.com",
@@ -5790,7 +5790,7 @@
       "Magnitude of Russian Operations": "Not disclosed publicly ",
       "CUSIP": "CSP_18915M107",
       "Temp Logo": "https://dl.airtable.com/.attachmentThumbnails/391677638a58c04f873b21c09bfcd7a6/da852ff4",
-      "Last Modified": "2026-04-12T05:09:03.073Z",
+      "Last Modified": "2026-10-05T01:54:09.585Z",
       "Market Cap (Std)": 15614954706
     }
   },
@@ -7426,7 +7426,7 @@
     "createdTime": "2022-03-17T05:35:10.000Z",
     "fields": {
       "Name": "Alphabet",
-      "Action": "Withdraw all operations in Moscow; stop taking new customers; stop ads",
+      "Action": "Exited Russian Market",
       "Logo": [
         {
           "id": "attQw2ove7OlgDwmt",
@@ -7455,7 +7455,7 @@
           }
         }
       ],
-      "Status": "Scaling Back",
+      "Status": "Withdrawal",
       "Country": "United States",
       "Website URL": "https://www.abc.xyz",
       "Sector": "Communication Services",
@@ -7469,7 +7469,7 @@
       "CUSIP": "CSP_02079K305",
       "Temp Logo": "https://dl.airtable.com/.attachmentThumbnails/cad83f80e835414b4d5579638ecfe91e/871c27a3",
       "Date of Last Action": "2022-03-03T00:00:00.000Z",
-      "Last Modified": "2026-04-12T05:09:03.073Z",
+      "Last Modified": "2026-10-05T01:54:09.585Z",
       "Market Cap (Std)": 1367468689440
     }
   },
@@ -40286,13 +40286,13 @@
     "createdTime": "2022-05-01T06:29:34.000Z",
     "fields": {
       "Name": "Hoffmann Group",
-      "Action": "Still operating and advertising in Russia",
-      "Status": "Digging In",
+      "Action": "Exit from Russian market",
+      "Status": "Withdrawal",
       "Country": "Germany",
       "Link to Announcement": "https://hoffmann-group.ru",
       "Magnitude of Russian Operations": "Offices in St Petersburg and Moscow",
       "Temp Logo": "https://dl.airtable.com/.attachmentThumbnails/d339914b6a62c44dd19fe50524bc469e/58756152",
-      "Last Modified": "2022-07-08T01:43:21.000Z"
+      "Last Modified": "2026-10-05T01:54:09.585Z"
     }
   },
   {
