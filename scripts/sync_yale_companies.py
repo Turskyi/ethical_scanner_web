@@ -517,6 +517,40 @@ def sync_dataset(
     }
 
 
+ALLOWED_FIELDS = {
+    "Name",
+    "Brands",
+    "Status",
+    "Action",
+    "Country",
+    "Website URL",
+    "Link to Announcement",
+    "Sector",
+    "Industry",
+    "Description",
+    "Exception",
+    "Date of Last Action",
+}
+
+
+def trim_dataset(dataset: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    trimmed = []
+    for item in dataset:
+        record = {}
+        if "id" in item:
+            record["id"] = item["id"]
+        fields = item.get("fields", {})
+        cleaned_fields = {}
+        for k in ALLOWED_FIELDS:
+            v = fields.get(k)
+            if v is not None and v != "" and v != []:
+                cleaned_fields[k] = v
+        if cleaned_fields:
+            record["fields"] = cleaned_fields
+        trimmed.append(record)
+    return trimmed
+
+
 def load_dataset(path: Path) -> list[dict[str, Any]]:
     with path.open("r", encoding="utf-8") as file:
         payload = json.load(file)
@@ -595,7 +629,8 @@ def main() -> int:
     }
 
     if not args.dry_run:
-        write_json(output_path, dataset, indent=args.indent)
+        trimmed = trim_dataset(dataset)
+        write_json(output_path, trimmed, indent=args.indent)
 
     if summary_path:
         write_json(summary_path, final_summary, indent=args.indent)
