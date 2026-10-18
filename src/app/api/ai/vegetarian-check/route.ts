@@ -9,22 +9,38 @@ const CORS_HEADERS = {
   'Cache-Control': 'no-store',
 };
 
-const VEGETARIAN_CHECK_PROMPT =
-  'You are an expert food safety and dietary analyst. Your job is to analyze ' +
-  'a list of product ingredients and determine whether the product is 100% vegetarian ' +
-  '(suitable for vegetarians: no meat, poultry, fish, seafood, gelatin, animal fat, tallow, ' +
-  'animal rennet, carmine, cochineal, or slaughter byproducts; dairy, eggs, and honey ' +
-  'are allowed for vegetarians).\n\n' +
-  'Analyze carefully. Respond ONLY with a valid JSON object matching this structure:\n' +
-  '{\n' +
-  '  "isVegetarian": boolean,\n' +
-  '  "confidence": "high" | "medium" | "low",\n' +
-  '  "reason": "Concise explanation (1-2 sentences) of why it is or is not vegetarian."\n' +
-  '}\n' +
-  'Do not include any Markdown code blocks or text outside the JSON object.';
-
 const GEMINI_MODEL = 'gemini-3.5-flash-lite';
 const MAX_OUTPUT_TOKENS = 400;
+
+function getVegetarianCheckPrompt(language?: string): string {
+  const normalized = language?.toLowerCase().trim() || 'en';
+  const isUkrainian =
+    normalized.startsWith('uk') ||
+    normalized.startsWith('ua') ||
+    normalized.includes('ukrainian');
+
+  const languageInstruction = isUkrainian
+    ? 'CRITICAL: The "reason" field in the JSON response MUST be written in Ukrainian language (українською мовою).'
+    : normalized !== 'en' && normalized !== 'english'
+      ? `CRITICAL: The "reason" field in the JSON response MUST be written in the language with code "${language}".`
+      : 'CRITICAL: The "reason" field in the JSON response MUST be written in English.';
+
+  return (
+    'You are an expert food safety and dietary analyst. Your job is to analyze ' +
+    'a list of product ingredients and determine whether the product is 100% vegetarian ' +
+    '(suitable for vegetarians: no meat, poultry, fish, seafood, gelatin, animal fat, tallow, ' +
+    'animal rennet, carmine, cochineal, or slaughter byproducts; dairy, eggs, and honey ' +
+    'are allowed for vegetarians).\n\n' +
+    `${languageInstruction}\n\n` +
+    'Analyze carefully. Respond ONLY with a valid JSON object matching this structure:\n' +
+    '{\n' +
+    '  "isVegetarian": boolean,\n' +
+    '  "confidence": "high" | "medium" | "low",\n' +
+    '  "reason": "Concise explanation (1-2 sentences) of why it is or is not vegetarian."\n' +
+    '}\n' +
+    'Do not include any Markdown code blocks or text outside the JSON object.'
+  );
+}
 
 const PROVIDERS = [
   {
@@ -56,7 +72,10 @@ function jsonResponse(body: object, status: number): Response {
 }
 
 function parseVegetarianAnalysis(text: string): VegetarianAnalysis | null {
-  const clean = text.replace(/```json/gi, '').replace(/```/g, '').trim();
+  const clean = text
+    .replace(/```json/gi, '')
+    .replace(/```/g, '')
+    .trim();
   try {
     const parsed = JSON.parse(clean);
     if (
@@ -108,7 +127,9 @@ async function requestChatCompletion(
   provider: (typeof PROVIDERS)[number],
   ingredients: string,
   apiKey: string,
+  language?: string,
 ): Promise<VegetarianAnalysis> {
+  const systemPrompt = getVegetarianCheckPrompt(language);
   const response = await fetch(provider.url, {
     method: 'POST',
     headers: {
@@ -120,7 +141,7 @@ async function requestChatCompletion(
       temperature: 0.1,
       max_tokens: MAX_OUTPUT_TOKENS,
       messages: [
-        { role: 'system', content: VEGETARIAN_CHECK_PROMPT },
+        { role: 'system', content: systemPrompt },
         { role: 'user', content: `Ingredients to analyze: ${ingredients}` },
       ],
     }),
@@ -147,15 +168,19 @@ async function requestChatCompletion(
 async function requestGemini(
   ingredients: string,
   apiKey: string,
+  language?: string,
 ): Promise<VegetarianAnalysis> {
+  const systemPrompt = getVegetarianCheckPrompt(language);
   const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${encodeURIComponent(apiKey)}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${encodeURIComponent(
+      apiKey,
+    )}`,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         systemInstruction: {
-          parts: [{ text: VEGETARIAN_CHECK_PROMPT }],
+          parts: [{ text: systemPrompt }],
         },
         contents: [
           {
@@ -243,6 +268,26 @@ export async function POST(request: Request) {
     return jsonResponse({ error: 'Invalid ingredients text' }, 400);
   }
 
+  let language: string | undefined;
+  const reqBody = body as Record<string, unknown>;
+  if (
+    typeof reqBody.language === 'string' &&
+    reqBody.language.trim().length > 0
+  ) {
+    language = reqBody.language.trim();
+  } else if (
+    typeof reqBody.locale === 'string' &&
+    reqBody.locale.trim().length > 0
+  ) {
+    language = reqBody.locale.trim();
+  }
+  if (!language) {
+    const acceptLanguage = request.headers.get('accept-language');
+    if (acceptLanguage) {
+      language = acceptLanguage;
+    }
+  }
+
   for (const provider of PROVIDERS) {
     const apiKey = provider.apiKey();
     if (apiKey) {
@@ -251,6 +296,7 @@ export async function POST(request: Request) {
           provider,
           ingredients,
           apiKey,
+          language,
         );
         return jsonResponse(
           {
@@ -269,7 +315,7 @@ export async function POST(request: Request) {
   const geminiApiKey = process.env.GEMINI_API_KEY;
   if (geminiApiKey) {
     try {
-      const analysis = await requestGemini(ingredients, geminiApiKey);
+      const analysis = await requestGemini(ingredients, geminiApiKey, language);
       return jsonResponse(
         { ...analysis, provider: 'Gemini', model: GEMINI_MODEL },
         200,

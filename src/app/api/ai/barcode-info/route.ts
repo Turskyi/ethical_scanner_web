@@ -9,13 +9,30 @@ const CORS_HEADERS = {
   'Cache-Control': 'no-store',
 };
 
-const BARCODE_INFO_PROMPT =
-  'You analyze product identifiers. In no more than three short sentences, ' +
-  'explain what can and cannot be inferred from the provided barcode. Clarify ' +
-  'that a GS1 prefix identifies the allocating GS1 organization, not where ' +
-  'the product was manufactured. Do not claim an origin without reliable ' +
-  'evidence. State when the identifier is insufficient. End with a complete ' +
-  'sentence and do not ask a follow-up question.';
+function getBarcodeInfoPrompt(language?: string): string {
+  const normalized = language?.toLowerCase().trim() || 'en';
+  const isUkrainian =
+    normalized.startsWith('uk') ||
+    normalized.startsWith('ua') ||
+    normalized.includes('ukrainian');
+
+  const languageInstruction = isUkrainian
+    ? 'CRITICAL: You MUST write your explanation in Ukrainian language (українською мовою).'
+    : normalized !== 'en' && normalized !== 'english'
+      ? `CRITICAL: You MUST write your explanation in the language with code "${language}".`
+      : 'CRITICAL: You MUST write your explanation in English.';
+
+  return (
+    'You analyze product identifiers. In no more than three short sentences, ' +
+    'explain what can and cannot be inferred from the provided barcode. Clarify ' +
+    'that a GS1 prefix identifies the allocating GS1 organization, not where ' +
+    'the product was manufactured. Do not claim an origin without reliable ' +
+    'evidence. State when the identifier is insufficient. End with a complete ' +
+    'sentence and do not ask a follow-up question.\n\n' +
+    `${languageInstruction}`
+  );
+}
+
 const GEMINI_MODEL = 'gemini-3.5-flash-lite';
 const MAX_OUTPUT_TOKENS = 400;
 
@@ -68,7 +85,9 @@ async function requestChatCompletion(
   provider: (typeof PROVIDERS)[number],
   barcode: string,
   apiKey: string,
+  language?: string,
 ): Promise<string> {
+  const systemPrompt = getBarcodeInfoPrompt(language);
   const response = await fetch(provider.url, {
     method: 'POST',
     headers: {
@@ -80,7 +99,7 @@ async function requestChatCompletion(
       temperature: 0.2,
       max_tokens: MAX_OUTPUT_TOKENS,
       messages: [
-        { role: 'system', content: BARCODE_INFO_PROMPT },
+        { role: 'system', content: systemPrompt },
         { role: 'user', content: `Analyze this identifier: ${barcode}` },
       ],
     }),
@@ -99,15 +118,22 @@ async function requestChatCompletion(
   return info;
 }
 
-async function requestGemini(barcode: string, apiKey: string): Promise<string> {
+async function requestGemini(
+  barcode: string,
+  apiKey: string,
+  language?: string,
+): Promise<string> {
+  const systemPrompt = getBarcodeInfoPrompt(language);
   const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${encodeURIComponent(apiKey)}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${encodeURIComponent(
+      apiKey,
+    )}`,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         systemInstruction: {
-          parts: [{ text: BARCODE_INFO_PROMPT }],
+          parts: [{ text: systemPrompt }],
         },
         contents: [
           {
@@ -195,11 +221,36 @@ export async function POST(request: Request) {
     return jsonResponse({ error: 'Invalid barcode' }, 400);
   }
 
+  let language: string | undefined;
+  const reqBody = body as Record<string, unknown>;
+  if (
+    typeof reqBody.language === 'string' &&
+    reqBody.language.trim().length > 0
+  ) {
+    language = reqBody.language.trim();
+  } else if (
+    typeof reqBody.locale === 'string' &&
+    reqBody.locale.trim().length > 0
+  ) {
+    language = reqBody.locale.trim();
+  }
+  if (!language) {
+    const acceptLanguage = request.headers.get('accept-language');
+    if (acceptLanguage) {
+      language = acceptLanguage;
+    }
+  }
+
   for (const provider of PROVIDERS) {
     const apiKey = provider.apiKey();
     if (apiKey) {
       try {
-        const info = await requestChatCompletion(provider, barcode, apiKey);
+        const info = await requestChatCompletion(
+          provider,
+          barcode,
+          apiKey,
+          language,
+        );
         return jsonResponse(
           { info, provider: provider.name, model: provider.model },
           200,
@@ -213,8 +264,11 @@ export async function POST(request: Request) {
   const geminiApiKey = process.env.GEMINI_API_KEY;
   if (geminiApiKey) {
     try {
-      const info = await requestGemini(barcode, geminiApiKey);
-      return jsonResponse({ info, provider: 'Gemini', model: GEMINI_MODEL }, 200);
+      const info = await requestGemini(barcode, geminiApiKey, language);
+      return jsonResponse(
+        { info, provider: 'Gemini', model: GEMINI_MODEL },
+        200,
+      );
     } catch (error) {
       console.warn('Gemini barcode lookup failed:', error);
     }
