@@ -71,7 +71,7 @@ export default function Home() {
           Screenshots
         </h2>
         <div className="flex justify-center overflow-x-auto">
-          <div className="flex w-max gap-2">
+          <div className="flex w-max gap-2 pr-4">
             <Image
               src={screenshot1}
               alt="Screenshot 1"
@@ -121,7 +121,7 @@ export default function Home() {
       </div>
       <footer className="mt-8 text-center text-white">
         <div className="mb-8 flex flex-col items-center space-y-4">
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-4 pr-4">
             <a
               href={`${GOOGLE_PLAY}`}
               target="_blank"
